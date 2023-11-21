@@ -11,8 +11,8 @@
     <Window.Resources>
         <!--
         <ControlTemplate x:Key="CaclButton" TargetType="Button">
-            <Border Background="{TemplateBinding Background}" BorderBrush="gray" BorderThickness="1" CornerRadius="0">
-                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Border x:Name="bdr_main" CornerRadius="0" Margin="0" BorderThickness="1" BorderBrush="#707070" Background="#1F1F1F">
+                <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" Margin="8,6,8,6" ContentSource="Content" />
             </Border>
             
             <ControlTemplate.Resources>
