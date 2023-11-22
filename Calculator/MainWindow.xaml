@@ -9,30 +9,30 @@
         Background="Black"
         Foreground="White">
     <Window.Resources>
-        <!--
-        <ControlTemplate x:Key="CaclButton" TargetType="Button">
-            <Border x:Name="bdr_main" CornerRadius="0" Margin="0" BorderThickness="1" BorderBrush="#707070" Background="#1F1F1F">
-                <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" Margin="8,6,8,6" ContentSource="Content" />
-            </Border>
+        <Style x:Key="DialogButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1F1F1F"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="Margin" Value="0"/>
             
-            <ControlTemplate.Resources>
-                <Style TargetType="Button">
-                    <Setter Property="Background" Value="#1F1F1F"/>
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="FontSize" Value="24"/>
-                    <Setter Property="Margin" Value="1"/>
-                </Style>
-            </ControlTemplate.Resources>
-            <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#2F2F2F"/>
-                </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#0F0F0F"/>
-                </Trigger>
-            </ControlTemplate.Triggers>
-        </ControlTemplate>
-        -->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="bdr_main" CornerRadius="0" Margin="1" BorderThickness="1" BorderBrush="#707070" Background="#1F1F1F">
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" Margin="8,6,8,6" ContentSource="Content" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bdr_main" Property="Background" Value="#2F2F2F"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bdr_main" Property="Background" Value="#0F0F0F"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
@@ -56,8 +56,9 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid.Resources>
+
                 <Style TargetType="Button">
-                    
+                    <!--
                     <Setter Property="Background" Value="#1F1F1F"/>
                     <Setter Property="Foreground" Value="White"/>
                     <Setter Property="FontSize" Value="24"/>
@@ -71,42 +72,27 @@
                             <Setter Property="Background" Value="#0F0F0F"/>
                         </Trigger>
                     </Style.Triggers>
+                    -->
                 </Style>
             </Grid.Resources>
-            <!--Template="{StaticResource CaclButton}"-->
-            <Button Grid.Column="1" Grid.Row="5">0
-                <Button.Template>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border x:Name="bdr_main" CornerRadius="0" Margin="0" BorderThickness="1" BorderBrush="#707070" Background="#1F1F1F">
-                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" Margin="8,6,8,6" ContentSource="Content" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="bdr_main" Property="Background" Value="#2F2F2F"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="bdr_main" Property="Background" Value="#0F0F0F"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-            <Button Grid.Column="0" Grid.Row="4">1</Button>
-            <Button Grid.Column="1" Grid.Row="4">2</Button>
-            <Button Grid.Column="2" Grid.Row="4">3</Button>
-            <Button Grid.Column="0" Grid.Row="3">4</Button>
-            <Button Grid.Column="1" Grid.Row="3">5</Button>
-            <Button Grid.Column="2" Grid.Row="3">6</Button>
-            <Button Grid.Column="0" Grid.Row="2">7</Button>
-            <Button Grid.Column="1" Grid.Row="2">8</Button>
-            <Button Grid.Column="2" Grid.Row="2">9</Button>
-            <Button Grid.Column="0" Grid.Row="5">,</Button>
-            <Button Grid.Column="3" Grid.Row="5">=</Button>
-            <Button Grid.Column="3" Grid.Row="4">+</Button>
-            <Button Grid.Column="3" Grid.Row="3">–</Button>
-            <Button Grid.Column="3" Grid.Row="2">*</Button>
-            <Button Grid.Column="3" Grid.Row="1">/</Button>
-            <Button Grid.Column="2" Grid.Row="5">&lt;</Button>
+
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="1" Grid.Row="5">0</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="0" Grid.Row="4">1</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="1" Grid.Row="4">2</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="2" Grid.Row="4">3</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="0" Grid.Row="3">4</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="1" Grid.Row="3">5</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="2" Grid.Row="3">6</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="0" Grid.Row="2">7</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="1" Grid.Row="2">8</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="2" Grid.Row="2">9</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="0" Grid.Row="5">,</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="5">=</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="4">+</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="3">–</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="2">*</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="1">/</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="2" Grid.Row="5">&lt;</Button>
         </Grid>
     </Grid>
 </Window>
