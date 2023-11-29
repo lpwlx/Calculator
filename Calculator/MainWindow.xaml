@@ -56,9 +56,8 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid.Resources>
-
+                <!--
                 <Style TargetType="Button">
-                    <!--
                     <Setter Property="Background" Value="#1F1F1F"/>
                     <Setter Property="Foreground" Value="White"/>
                     <Setter Property="FontSize" Value="24"/>
@@ -72,8 +71,8 @@
                             <Setter Property="Background" Value="#0F0F0F"/>
                         </Trigger>
                     </Style.Triggers>
-                    -->
                 </Style>
+                -->
             </Grid.Resources>
 
             <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="1" Grid.Row="5">0</Button>
@@ -93,6 +92,13 @@
             <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="2">*</Button>
             <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="1">/</Button>
             <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="2" Grid.Row="5">&lt;</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="1" Grid.Row="1">(</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="2" Grid.Row="1">)</Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="0" Grid.Row="1"></Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="0" Grid.Row="0"></Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="1" Grid.Row="0"></Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="2" Grid.Row="0"></Button>
+            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="0">AC</Button>
         </Grid>
     </Grid>
 </Window>
