@@ -62,7 +62,6 @@
                     <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
                 </MultiBinding>
             </TextBox.FontSize>
-
         </TextBox>
 
         <Grid x:Name="ButtonGrid" Grid.Row="1" Grid.Column="0">
@@ -110,20 +109,20 @@
             <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="0" Grid.Row="2">7</Button>
             <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="1" Grid.Row="2">8</Button>
             <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="2" Grid.Row="2">9</Button>
-            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="0" Grid.Row="5">,</Button>
+            <Button x:Name="point" Style="{StaticResource DialogButtonStyle}" Grid.Column="0" Grid.Row="5">.</Button>
             <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="5">=</Button>
             <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="4">+</Button>
             <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="3">–</Button>
-            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="2">*</Button>
-            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="1">/</Button>
-            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="2" Grid.Row="5">&lt;</Button>
+            <Button x:Name="multiply" Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="2">×</Button>
+            <Button x:Name="divide" Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="1">÷</Button>
+            <Button x:Name="erase" ToolTip="erase" Style="{StaticResource DialogButtonStyle}" Grid.Column="2" Grid.Row="5">⌫</Button>
             <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="1" Grid.Row="1">(</Button>
             <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="2" Grid.Row="1">)</Button>
             <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="0" Grid.Row="1">^</Button>
-            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="0" Grid.Row="0">√</Button>
-            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="1" Grid.Row="0" FontSize="24">copy</Button>
+            <Button x:Name="root" Style="{StaticResource DialogButtonStyle}" Grid.Column="0" Grid.Row="0">√</Button>
+            <Button x:Name="copy" ToolTip="copy to clipboard" Style="{StaticResource DialogButtonStyle}" Grid.Column="1" Grid.Row="0" FontSize="24">📄</Button>
             <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="2" Grid.Row="0"></Button>
-            <Button Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="0">AC</Button>
+            <Button x:Name="clear" ToolTip="clear" Style="{StaticResource DialogButtonStyle}" Grid.Column="3" Grid.Row="0">AC</Button>
         </Grid>
     </Grid>
 </Window>

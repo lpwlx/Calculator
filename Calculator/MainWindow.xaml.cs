@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,8 +28,6 @@ namespace Calculator {
 					((Button)el).Click += ButtonClick;
 				}
 			}
-			//inOut.Cursor = Cursors.IBeam;
-
 		}
 
 		private void Calculate() {
@@ -54,6 +53,9 @@ namespace Calculator {
 		private void ButtonClick(object sender, RoutedEventArgs e) {
 			//string str = e.OriginalSource as string;
 			string str = (string)((Button)e.OriginalSource).Content;
+			int caretIndex = inOut.CaretIndex;
+			inOut.Text = inOut.Text.Insert(inOut.CaretIndex, str); // вставка по позиции курсора
+			inOut.CaretIndex = caretIndex + 1;
 			inOut.Focus();
 		}
 
@@ -82,10 +84,39 @@ namespace Calculator {
 
 		private void InOutTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) {
 			e.Handled = true; // блокировка ввода текста
+			/*
 			if (Char.IsDigit(e.Text[0]) || e.Text == "+" || e.Text == "-" || e.Text == "*" || e.Text == "/" || e.Text == "^" || e.Text == "." || e.Text == "," || e.Text == "(" || e.Text == ")") {
 				int caretIndex = inOut.CaretIndex;
 				inOut.Text = inOut.Text.Insert(inOut.CaretIndex, e.Text); // вставка по позиции курсора
 				inOut.CaretIndex = caretIndex + 1;
+			}
+			*/
+			Button button = null;
+			foreach (UIElement el in ButtonGrid.Children) {
+				if (el is Button) {
+					if ((string)((Button)el).Content == e.Text) {
+						button = (Button)el;
+					}
+					else {
+						switch (e.Text[0]) {
+							case ',':
+								button = point;
+								break;
+							case '*':
+								button = multiply;
+								break;
+							case '/':
+								button = divide;
+								break;
+							case '\r':
+								button = erase;
+								break;
+							case '\u007F':
+								button = clear;
+								break;
+						}
+					}
+				}
 			}
 		}
 	}

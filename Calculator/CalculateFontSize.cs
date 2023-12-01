@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -13,12 +14,10 @@ namespace Calculator {
 				double textBoxHeight = (double)values[2];
 				string text = values[0]?.ToString();
 
-				// Регулировка размера шрифта в зависимости от ваших критериев
 				double fontSize = originalFontSize;
 
 				// Проверка, превышает ли ширина текста ширину TextBox
 				while (TextWidthCalculator.GetTextWidth(text, FontFamily.Source, fontSize) > textBoxWidth) {
-					// Если да, уменьшить размер шрифта вдвое и повторить проверку
 					fontSize /= 1.5;
 				}
 
@@ -30,6 +29,21 @@ namespace Calculator {
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
 			throw new NotImplementedException();
+		}
+	}
+	public static class TextWidthCalculator {
+		public static double GetTextWidth(string text, string fontFamily, double fontSize) {
+			FormattedText formattedText = new FormattedText(
+				text,
+				CultureInfo.CurrentCulture,
+				FlowDirection.LeftToRight,
+				new Typeface(new FontFamily(fontFamily), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal),
+				fontSize,
+				Brushes.Black,
+				new NumberSubstitution(),
+				1.0); // PixelsPerDip
+
+			return formattedText.Width;
 		}
 	}
 }
