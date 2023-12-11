@@ -16,16 +16,22 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using NCalc;
 
-namespace Calculator {
+namespace Calculator
+{
 	/// <summary>
 	/// Логика взаимодействия для MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window {
+	public partial class MainWindow : Window
+	{
 		Button pressedButton = null;
-		public MainWindow() {
+
+		public MainWindow()
+		{
 			InitializeComponent();
-			foreach (UIElement el in ButtonGrid.Children) {
-				if (el is Button) {
+			foreach (UIElement el in ButtonGrid.Children)
+			{
+				if (el is Button)
+				{
 					switch (((Button)el).Name)
 					{
 						case "erase":
@@ -73,7 +79,7 @@ namespace Calculator {
 		{
 			pressedButton = erase;
 			int caretIndex = inOut.CaretIndex;
-			if(caretIndex > 0)
+			if (caretIndex > 0)
 			{
 				inOut.Text = inOut.Text.Remove(caretIndex - 1, 1);
 				inOut.CaretIndex = caretIndex - 1;
@@ -92,7 +98,8 @@ namespace Calculator {
 			//-------------------
 		}
 
-		private void ButtonClick(object sender, RoutedEventArgs e) {
+		private void ButtonClick(object sender, RoutedEventArgs e)
+		{
 			/*
 			//string str = e.OriginalSource as string;
 			string str = (string)((Button)e.OriginalSource).Content;
@@ -103,7 +110,8 @@ namespace Calculator {
 			*/
 			HandleButtonClick(sender as Button);
 		}
-		private void HandleButtonClick(Button button) {
+		private void HandleButtonClick(Button button)
+		{
 			pressedButton = button;
 			int caretIndex = inOut.CaretIndex;
 			inOut.Text = inOut.Text.Insert(inOut.CaretIndex, (string)button.Content); // вставка по позиции курсора
@@ -111,16 +119,20 @@ namespace Calculator {
 			inOut.Focus();
 		}
 
-		private void InOut_PreviewKeyDown(object sender, KeyEventArgs e) {
-			switch (e.Key) {
+		private void InOut_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			switch (e.Key)
+			{
 				case Key.Left:
-					if (inOut.CaretIndex > 0) {
+					if (inOut.CaretIndex > 0)
+					{
 						inOut.CaretIndex--;
 					}
 					e.Handled = true;
 					break;
 				case Key.Right:
-					if (inOut.CaretIndex < inOut.Text.Length) {
+					if (inOut.CaretIndex < inOut.Text.Length)
+					{
 						inOut.CaretIndex++;
 					}
 					e.Handled = true;
@@ -144,49 +156,55 @@ namespace Calculator {
 					break;
 				default:
 					e.Handled = true;
-					char sym = (char)e.Key;
+					string str = e.Key.ToString();
 					Button button = null;
 					bool flag = false;
-					foreach (UIElement el in ButtonGrid.Children) {
-						if (el is Button && ((Button)el).Content != null) {
-							if (sym == ((string)((Button)el).Content)[0]) {
+					foreach (UIElement el in ButtonGrid.Children)
+					{
+						if (el is Button && ((Button)el).Content != null)
+						{
+							if (str == ((string)((Button)el).Content))
+							{
 								button = (Button)el;
 								flag = true;
 							}
-							else {
-								switch (sym) {
-									case ',':
+							else
+							{
+								switch (str)
+								{
+									case ",":
 										button = point;
 										flag = true;
 										break;
-									case '*':
+									case "*":
 										button = multiply;
 										flag = true;
 										break;
-									case '/':
+									case "/":
 										button = divide;
 										flag = true;
 										break;
-									case '-':
+									case "-":
 										button = minus;
 										flag = true;
 										break;
-									/*
-									case '\r':
-										button = erase;
-										flag = true;
-										break;
-									case '\u007F':
-										button = clear;
-										flag = true;
-										break;
-									*/
+										/*
+										case '\r':
+											button = erase;
+											flag = true;
+											break;
+										case '\u007F':
+											button = clear;
+											flag = true;
+											break;
+										*/
 								}
 							}
 						}
 						if (flag) break;
 					}
-					if(button != null) {
+					if (button != null)
+					{
 						HandleButtonClick(button);
 						SetButtonPressedState(button, true);
 					}
@@ -194,7 +212,8 @@ namespace Calculator {
 			}
 		}
 
-		private void InOut_PreviewTextInput(object sender, TextCompositionEventArgs e) {
+		private void InOut_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
 			e.Handled = true; // блокировка ввода текста
 			/*
 			if (Char.IsDigit(e.Text[0]) || e.Text == "+" || e.Text == "-" || e.Text == "*" || e.Text == "/" || e.Text == "^" || e.Text == "." || e.Text == "," || e.Text == "(" || e.Text == ")") {
@@ -234,11 +253,14 @@ namespace Calculator {
 			}
 			*/
 		}
-		private void InOut_PreviewKeyUp(object sender, KeyEventArgs e) {
+		private void InOut_PreviewKeyUp(object sender, KeyEventArgs e)
+		{
 			SetButtonPressedState(pressedButton, false);
 		}
-		private void SetButtonPressedState(Button button, bool isPressed) {
-			if (button != null) {
+		private void SetButtonPressedState(Button button, bool isPressed)
+		{
+			if (button != null)
+			{
 				//button.SetValue(Button.IsPressedProperty, isPressed);
 			}
 		}
