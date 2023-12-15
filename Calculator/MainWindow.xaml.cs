@@ -16,24 +16,25 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using NCalc;
 
-namespace Calculator
-{
-	/// <summary>
-	/// Логика взаимодействия для MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window
-	{
+namespace Calculator {
+	public partial class MainWindow : Window {
 		Button pressedButton = null;
 
-		public MainWindow()
+		private Dictionary<Key, char> keys = new Dictionary<Key, char>()
 		{
+			{Key.D0, '0'}, {Key.D1, '1'}, {Key.D2, '2'}, {Key.D3, '3'}, {Key.D4, '4'},
+			{Key.D5, '5'}, {Key.D6, '6'}, {Key.D7, '7'}, {Key.D8, '8'}, {Key.D9, '9'},
+			{Key.NumPad0, '0'}, {Key.NumPad1, '1'}, {Key.NumPad2, '2'}, {Key.NumPad3, '3'}, {Key.NumPad4, '4'},
+			{Key.NumPad5, '5'}, {Key.NumPad6, '6'}, {Key.NumPad7, '7'}, {Key.NumPad8, '8'}, {Key.NumPad9, '9'},
+			{Key.Divide, '÷'}, {Key.Multiply, '×'}, {Key.Add, '+'}, {Key.Subtract, '–'},
+			{Key.Decimal, '.'}, {Key.OemComma, '.'}, {Key.OemPeriod, '.'}
+		};
+
+		public MainWindow() {
 			InitializeComponent();
-			foreach (UIElement el in ButtonGrid.Children)
-			{
-				if (el is Button)
-				{
-					switch (((Button)el).Name)
-					{
+			foreach (UIElement el in ButtonGrid.Children) {
+				if (el is Button) {
+					switch (((Button)el).Name) {
 						case "erase":
 							((Button)el).Click += EraseButtonClick;
 							break;
@@ -47,7 +48,9 @@ namespace Calculator
 							((Button)el).Click += EqualsButtonClick;
 							break;
 						default:
-							((Button)el).Click += ButtonClick;
+							if (((Button)el).Content != null) {
+								((Button)el).Click += ButtonClick;
+							}
 							break;
 					}
 				}
@@ -55,156 +58,96 @@ namespace Calculator
 			inOut.Focus();
 		}
 
-		private void CopyButtonClick(object sender, RoutedEventArgs e)
-		{
-			throw new NotImplementedException(); //---------------
+		private void CopyButtonClick(object sender, RoutedEventArgs e) {
+			Clipboard.SetText(inOut.Text);
 		}
 
-		private void ClearButtonClick(object sender, RoutedEventArgs e)
-		{
+		private void ClearButtonClick(object sender, RoutedEventArgs e) {
 			HandleClearButtonClick();
 		}
 
-		private void HandleClearButtonClick()
-		{
-			throw new NotImplementedException(); //-----------
+		private void HandleClearButtonClick() {
+			inOut.Text = string.Empty;
 		}
 
-		private void EraseButtonClick(object sender, RoutedEventArgs e)
-		{
+		private void EraseButtonClick(object sender, RoutedEventArgs e) {
 			HandleEraseButtonClick();
 		}
 
-		private void HandleEraseButtonClick()
-		{
+		private void HandleEraseButtonClick(bool isDelete = false) {
 			pressedButton = erase;
 			int caretIndex = inOut.CaretIndex;
-			if (caretIndex > 0)
-			{
-				inOut.Text = inOut.Text.Remove(caretIndex - 1, 1);
-				inOut.CaretIndex = caretIndex - 1;
+			if (caretIndex > 0) {
+				inOut.Text = inOut.Text.Remove(caretIndex -1 /*+ (isDelete ? 0 : -1)*/, 1);
+				inOut.CaretIndex = caretIndex -1 /*+ (isDelete ? 0 : -1)*/;
 			}
 			inOut.Focus();
 		}
 
-		private void EqualsButtonClick(object sender, RoutedEventArgs e)
-		{
+		private void EqualsButtonClick(object sender, RoutedEventArgs e) {
 			HandleEqualsButtonClick();
 		}
 
-		private void HandleEqualsButtonClick()
-		{
-			pressedButton = equals;
-			//-------------------
+		private void HandleEqualsButtonClick() {
+			pressedButton = equals; //---------
+			Calculate();
+			inOut.CaretIndex = inOut.Text.Length;
 		}
 
-		private void ButtonClick(object sender, RoutedEventArgs e)
-		{
-			/*
-			//string str = e.OriginalSource as string;
-			string str = (string)((Button)e.OriginalSource).Content;
-			int caretIndex = inOut.CaretIndex;
-			inOut.Text = inOut.Text.Insert(inOut.CaretIndex, str); // вставка по позиции курсора
-			inOut.CaretIndex = caretIndex + 1;
-			inOut.Focus(); 
-			*/
+		private void ButtonClick(object sender, RoutedEventArgs e) {
 			HandleButtonClick(sender as Button);
 		}
-		private void HandleButtonClick(Button button)
-		{
-			pressedButton = button;
+		private void HandleButtonClick(Button button) {
+			pressedButton = button; //----------
 			int caretIndex = inOut.CaretIndex;
 			inOut.Text = inOut.Text.Insert(inOut.CaretIndex, (string)button.Content); // вставка по позиции курсора
 			inOut.CaretIndex = caretIndex + 1;
 			inOut.Focus();
 		}
 
-		private void InOut_PreviewKeyDown(object sender, KeyEventArgs e)
-		{
-			switch (e.Key)
-			{
+		private void InOut_PreviewKeyDown(object sender, KeyEventArgs e) {
+			e.Handled = true;
+			switch (e.Key) {
 				case Key.Left:
-					if (inOut.CaretIndex > 0)
-					{
+					if (inOut.CaretIndex > 0) {
 						inOut.CaretIndex--;
 					}
-					e.Handled = true;
 					break;
 				case Key.Right:
-					if (inOut.CaretIndex < inOut.Text.Length)
-					{
+					if (inOut.CaretIndex < inOut.Text.Length) {
 						inOut.CaretIndex++;
 					}
-					e.Handled = true;
 					break;
-				case Key.Space:
-					e.Handled = true;
+				case Key.Up:
+					inOut.CaretIndex = 0;
 					break;
-				case Key.Enter:
-					e.Handled = true;
-					HandleEqualsButtonClick();
-					Calculate();
+				case Key.Down:
 					inOut.CaretIndex = inOut.Text.Length;
 					break;
-				case Key.Back:
-					e.Handled = true;
+				case Key.Enter:
+					HandleEqualsButtonClick();
+					break;
+				case Key.Back: // нельзя падать по кейсам, ошибка CS0163
 					HandleEraseButtonClick();
 					break;
-				case Key.OemComma:
-					e.Handled = true;
-					HandleButtonClick(point);
+				case Key.Delete:
+					HandleEraseButtonClick(true);
 					break;
 				default:
-					e.Handled = true;
-					string str = e.Key.ToString();
+					char sym;
+					keys.TryGetValue(e.Key, out sym);
 					Button button = null;
 					bool flag = false;
-					foreach (UIElement el in ButtonGrid.Children)
-					{
-						if (el is Button && ((Button)el).Content != null)
-						{
-							if (str == ((string)((Button)el).Content))
-							{
+					foreach (UIElement el in ButtonGrid.Children) {
+						if (el is Button && ((Button)el).Content != null) {
+							if (sym == ((string)((Button)el).Content)[0]) {
 								button = (Button)el;
 								flag = true;
-							}
-							else
-							{
-								switch (str)
-								{
-									case ",":
-										button = point;
-										flag = true;
-										break;
-									case "*":
-										button = multiply;
-										flag = true;
-										break;
-									case "/":
-										button = divide;
-										flag = true;
-										break;
-									case "-":
-										button = minus;
-										flag = true;
-										break;
-										/*
-										case '\r':
-											button = erase;
-											flag = true;
-											break;
-										case '\u007F':
-											button = clear;
-											flag = true;
-											break;
-										*/
-								}
 							}
 						}
 						if (flag) break;
 					}
-					if (button != null)
-					{
+					if (button != null) {
 						HandleButtonClick(button);
 						SetButtonPressedState(button, true);
 					}
@@ -212,80 +155,66 @@ namespace Calculator
 			}
 		}
 
-		private void InOut_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			e.Handled = true; // блокировка ввода текста
-			/*
-			if (Char.IsDigit(e.Text[0]) || e.Text == "+" || e.Text == "-" || e.Text == "*" || e.Text == "/" || e.Text == "^" || e.Text == "." || e.Text == "," || e.Text == "(" || e.Text == ")") {
-				int caretIndex = inOut.CaretIndex;
-				inOut.Text = inOut.Text.Insert(inOut.CaretIndex, e.Text); // вставка по позиции курсора
-				inOut.CaretIndex = caretIndex + 1;
-			}
-			*/
-			/*
-			Button button = null;
-			foreach (UIElement el in ButtonGrid.Children) {
-				if (el is Button) {
-					if ((string)((Button)el).Content == e.Text) {
-						button = (Button)el;
-					}
-					else {
-						switch (e.Text[0]) {
-							case ',':
-								button = point;
-								break;
-							case '*':
-								button = multiply;
-								break;
-							case '/':
-								button = divide;
-								break;
-							case '\r':
-								button = erase;
-								break;
-							case '\u007F':
-								button = clear;
-								break;
-						}
-					}
-					//button.SetValue(Button.IsPressedProperty, isPressed);
-				}
-			}
-			*/
+		private void InOut_PreviewTextInput(object sender, TextCompositionEventArgs e) {
+			//e.Handled = true; // блокировка ввода текста
 		}
-		private void InOut_PreviewKeyUp(object sender, KeyEventArgs e)
-		{
+		private void InOut_PreviewKeyUp(object sender, KeyEventArgs e) {
 			SetButtonPressedState(pressedButton, false);
 		}
-		private void SetButtonPressedState(Button button, bool isPressed)
-		{
-			if (button != null)
-			{
+		private void SetButtonPressedState(Button button, bool isPressed) {
+			if (button != null) {
 				//button.SetValue(Button.IsPressedProperty, isPressed);
 			}
 		}
-		private void Calculate()
-		{
+		/*
+		private void Calculate() {
 			string pattern = @"√(\d+)"; // поиск символов корня и их следующих цифр
 			Regex regex = new Regex(pattern);
 			string processedInput = regex.Replace(inOut.Text, "√($1)");
-			try
-			{
-				NCalc.Expression expression = new NCalc.Expression(processedInput.Replace('–', '-')/*.Replace(',', '.')*/.Replace("√", "Sqrt"));
+			try {
+				NCalc.Expression expression = new NCalc.Expression(processedInput.Replace('–', '-').Replace('×', '*').Replace('÷', '/').Replace("√", "Sqrt"));
+
 				object result = expression.Evaluate();
 
-				if (result != null)
-				{
-					inOut.Text = result.ToString();
+				if (result != null) {
+					inOut.Text = result.ToString().Replace(',', '.'); // ToString возвращает запятую (?)
 				}
-				else
-				{
-					inOut.Text = "Error";
+				else {
+					MessageBox.Show("Error");
 				}
 			}
-			catch (EvaluationException ex)
-			{
-				inOut.Text = "Error: " + ex.Message;
+			catch (EvaluationException ex) {
+				MessageBox.Show("Error: " + ex.Message);
+			}
+		}
+		*/
+		private void Calculate() {
+			string patternDecimal = @"(?<=\D|^)\.(\d+)"; // поиск чисел вида ".123"
+			Regex regexDecimal = new Regex(patternDecimal);
+			string processedInput = regexDecimal.Replace(inOut.Text, "0.$1"); // добавление нуля перед точкой
+
+			string patternSqrt = @"√(\d+(\.\d+)?)"; // поиск символов корня и их следующих цифр (включая дробные числа)
+			Regex regexSqrt = new Regex(patternSqrt);
+			processedInput = regexSqrt.Replace(processedInput, "√($1)");
+
+			string patternPow = @"(\(.+?\)|\d+(\.\d+)?|\w+)\^(\(.+?\)|\d+(\.\d+)?|\w+)"; // поиск выражений вида x^y (включая дробные числа)
+			Regex regexPow = new Regex(patternPow);
+			processedInput = regexPow.Replace(processedInput, "Pow($1, $3)");
+
+			try {
+				NCalc.Expression expression = new NCalc.Expression(processedInput.Replace('–', '-').Replace('×', '*').Replace('÷', '/').Replace("√", "Sqrt"));
+
+				object result = expression.Evaluate();
+
+				if (result != null) {
+					inOut.Text = result.ToString().Replace(',', '.'); // ToString возвращает запятую (?)
+				}
+				else {
+					MessageBox.Show("Error");
+				}
+			}
+			catch (EvaluationException ex) {
+				MessageBox.Show("Error: " + ex.Message);
 			}
 		}
 	}

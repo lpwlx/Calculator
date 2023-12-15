@@ -42,8 +42,8 @@
             <RowDefinition Height="20*"/>
             <RowDefinition Height="80*"/>
         </Grid.RowDefinitions>
-        
-        <TextBox x:Name="inOut" 
+
+        <TextBox x:Name="inOut"
             Width="Auto" Height="Auto" 
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
             HorizontalContentAlignment="Right" VerticalContentAlignment="Center"
@@ -56,14 +56,21 @@
             PreviewTextInput="InOut_PreviewTextInput"
             TextOptions.TextFormattingMode="Display">
 
+            <!-- установка CalculateFontSize как ресурса -->
+            <TextBox.Resources>
+                <local:CalculateFontSize x:Key="FontSizeConverter" InitialFontSize="40.0" MinFontSize="10.0"/>
+            </TextBox.Resources>
+
+            <!-- использование CalculateFontSize в MultiBinding -->
             <TextBox.FontSize>
-                <MultiBinding Converter="{StaticResource CalculateFontSize}">
+                <MultiBinding Converter="{StaticResource FontSizeConverter}" Mode="OneWay">
                     <Binding Path="Text" RelativeSource="{RelativeSource Self}" />
                     <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}" />
                     <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
                 </MultiBinding>
             </TextBox.FontSize>
         </TextBox>
+
 
         <Grid x:Name="ButtonGrid" Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>

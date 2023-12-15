@@ -7,24 +7,22 @@ using System.Windows.Media;
 namespace Calculator {
 	public class CalculateFontSize : IMultiValueConverter {
 		FontFamily FontFamily = System.Windows.SystemFonts.CaptionFontFamily;
+		public double InitialFontSize { get; set; }
+		public double MinFontSize { get; set; }
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
 			if (values.Length == 3) {
-				double originalFontSize = 40.0;
+				double fontSize = InitialFontSize;
+				double minFontSize = MinFontSize; // минимальный размер текста
 				double textBoxWidth = (double)values[1];
-				double textBoxHeight = (double)values[2];
 				string text = values[0]?.ToString();
 
-				double fontSize = originalFontSize;
-
-				// Проверка, превышает ли ширина текста ширину TextBox
-				while (TextWidthCalculator.GetTextWidth(text, FontFamily.Source, fontSize) > textBoxWidth) {
+				// превышает ли ширина текста ширину TextBox
+				while ((TextWidthCalculator.GetTextWidth(text, FontFamily.Source, fontSize) > textBoxWidth - 5) && fontSize >= minFontSize) { // зазор в пять пикселей
 					fontSize /= 1.5;
 				}
-
 				return fontSize;
 			}
-
-			return 28.0; // Размер шрифта по умолчанию
+			return InitialFontSize; // если параметров текстбокса не три, вернуть изначальный размер
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
@@ -43,7 +41,8 @@ namespace Calculator {
 				new NumberSubstitution(),
 				1.0); // PixelsPerDip
 
-			return formattedText.Width;
+			return formattedText.WidthIncludingTrailingWhitespace;
 		}
 	}
+
 }
