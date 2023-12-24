@@ -17,9 +17,11 @@ namespace Calculator {
 				string text = values[0]?.ToString();
 
 				// превышает ли ширина текста ширину TextBox
+				
 				while ((TextWidthCalculator.GetTextWidth(text, FontFamily.Source, fontSize) > textBoxWidth - 5) && fontSize >= minFontSize) { // зазор в пять пикселей
 					fontSize /= 1.5;
 				}
+				
 				return fontSize;
 			}
 			return InitialFontSize; // если параметров текстбокса не три, вернуть изначальный размер
@@ -44,5 +46,4 @@ namespace Calculator {
 			return formattedText.WidthIncludingTrailingWhitespace;
 		}
 	}
-
 }

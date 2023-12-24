@@ -18,8 +18,6 @@ using NCalc;
 
 namespace Calculator {
 	public partial class MainWindow : Window {
-		Button pressedButton = null;
-
 		private Dictionary<Key, char> keys = new Dictionary<Key, char>()
 		{
 			{Key.D0, '0'}, {Key.D1, '1'}, {Key.D2, '2'}, {Key.D3, '3'}, {Key.D4, '4'},
@@ -61,44 +59,34 @@ namespace Calculator {
 		private void CopyButtonClick(object sender, RoutedEventArgs e) {
 			Clipboard.SetText(inOut.Text);
 		}
-
 		private void ClearButtonClick(object sender, RoutedEventArgs e) {
 			HandleClearButtonClick();
 		}
-
 		private void HandleClearButtonClick() {
 			inOut.Text = string.Empty;
 		}
-
 		private void EraseButtonClick(object sender, RoutedEventArgs e) {
 			HandleEraseButtonClick();
 		}
-
 		private void HandleEraseButtonClick(bool isDelete = false) {
-			pressedButton = erase;
 			int caretIndex = inOut.CaretIndex;
-			if (caretIndex > 0) {
-				inOut.Text = inOut.Text.Remove(caretIndex -1 /*+ (isDelete ? 0 : -1)*/, 1);
-				inOut.CaretIndex = caretIndex -1 /*+ (isDelete ? 0 : -1)*/;
+			if (isDelete ? caretIndex < inOut.Text.Length : caretIndex > 0) {
+				inOut.Text = inOut.Text.Remove(caretIndex + (isDelete ? 0 : -1), 1);
+				inOut.CaretIndex = caretIndex + (isDelete ? 0 : -1);
 			}
 			inOut.Focus();
 		}
-
 		private void EqualsButtonClick(object sender, RoutedEventArgs e) {
 			HandleEqualsButtonClick();
 		}
-
 		private void HandleEqualsButtonClick() {
-			pressedButton = equals; //---------
 			Calculate();
 			inOut.CaretIndex = inOut.Text.Length;
 		}
-
 		private void ButtonClick(object sender, RoutedEventArgs e) {
 			HandleButtonClick(sender as Button);
 		}
 		private void HandleButtonClick(Button button) {
-			pressedButton = button; //----------
 			int caretIndex = inOut.CaretIndex;
 			inOut.Text = inOut.Text.Insert(inOut.CaretIndex, (string)button.Content); // вставка по позиции курсора
 			inOut.CaretIndex = caretIndex + 1;
@@ -125,12 +113,15 @@ namespace Calculator {
 					inOut.CaretIndex = inOut.Text.Length;
 					break;
 				case Key.Enter:
+					SetButtonPressedState(equals, true);
 					HandleEqualsButtonClick();
 					break;
-				case Key.Back: // нельзя падать по кейсам, ошибка CS0163
+				case Key.Back:
+					SetButtonPressedState(erase, true);
 					HandleEraseButtonClick();
 					break;
 				case Key.Delete:
+					SetButtonPressedState(erase, true);
 					HandleEraseButtonClick(true);
 					break;
 				default:
@@ -154,40 +145,53 @@ namespace Calculator {
 					break;
 			}
 		}
-
-		private void InOut_PreviewTextInput(object sender, TextCompositionEventArgs e) {
-			//e.Handled = true; // блокировка ввода текста
-		}
 		private void InOut_PreviewKeyUp(object sender, KeyEventArgs e) {
-			SetButtonPressedState(pressedButton, false);
+			switch (e.Key) {
+				case Key.Enter:
+					HandleEqualsButtonClick();
+					SetButtonPressedState(equals, false);
+					break;
+				case Key.Back:
+					HandleEraseButtonClick();
+					SetButtonPressedState(erase, false);
+					break;
+				case Key.Delete:
+					HandleEraseButtonClick(true);
+					SetButtonPressedState(erase, false);
+					break;
+				default:
+					char sym;
+					keys.TryGetValue(e.Key, out sym);
+					Button button = null;
+					bool flag = false;
+					foreach (UIElement el in ButtonGrid.Children) {
+						if (el is Button && ((Button)el).Content != null) {
+							if (sym == ((string)((Button)el).Content)[0]) {
+								button = (Button)el;
+								flag = true;
+							}
+						}
+						if (flag) break;
+					}
+					if (button != null) {
+						SetButtonPressedState(button, false);
+					}
+					break;
+			}
 		}
 		private void SetButtonPressedState(Button button, bool isPressed) {
 			if (button != null) {
-				//button.SetValue(Button.IsPressedProperty, isPressed);
-			}
-		}
-		/*
-		private void Calculate() {
-			string pattern = @"√(\d+)"; // поиск символов корня и их следующих цифр
-			Regex regex = new Regex(pattern);
-			string processedInput = regex.Replace(inOut.Text, "√($1)");
-			try {
-				NCalc.Expression expression = new NCalc.Expression(processedInput.Replace('–', '-').Replace('×', '*').Replace('÷', '/').Replace("√", "Sqrt"));
-
-				object result = expression.Evaluate();
-
-				if (result != null) {
-					inOut.Text = result.ToString().Replace(',', '.'); // ToString возвращает запятую (?)
-				}
-				else {
-					MessageBox.Show("Error");
+				if (button != null) {
+					if (isPressed) {
+						VisualStateManager.GoToState(button, "MyPressedState", true);
+					}
+					else {
+						VisualStateManager.GoToState(button, "MyNormalState", true);
+					}
 				}
 			}
-			catch (EvaluationException ex) {
-				MessageBox.Show("Error: " + ex.Message);
-			}
 		}
-		*/
+
 		private void Calculate() {
 			string patternDecimal = @"(?<=\D|^)\.(\d+)"; // поиск чисел вида ".123"
 			Regex regexDecimal = new Regex(patternDecimal);
@@ -213,7 +217,7 @@ namespace Calculator {
 					MessageBox.Show("Error");
 				}
 			}
-			catch (EvaluationException ex) {
+			catch (Exception ex) {
 				MessageBox.Show("Error: " + ex.Message);
 			}
 		}
