@@ -24,8 +24,8 @@ namespace Calculator {
 			{Key.D5, '5'}, {Key.D6, '6'}, {Key.D7, '7'}, {Key.D8, '8'}, {Key.D9, '9'},
 			{Key.NumPad0, '0'}, {Key.NumPad1, '1'}, {Key.NumPad2, '2'}, {Key.NumPad3, '3'}, {Key.NumPad4, '4'},
 			{Key.NumPad5, '5'}, {Key.NumPad6, '6'}, {Key.NumPad7, '7'}, {Key.NumPad8, '8'}, {Key.NumPad9, '9'},
-			{Key.Divide, '÷'}, {Key.Multiply, '×'}, {Key.Add, '+'}, {Key.Subtract, '–'},
-			{Key.Decimal, '.'}, {Key.OemComma, '.'}, {Key.OemPeriod, '.'}
+			{Key.Divide, '÷'}, {Key.Multiply, '×'}, {Key.Add, '+'}, {Key.Subtract, '–'}, {Key.Decimal, '.'},
+			{Key.OemQuestion, '÷'}, {Key.OemComma, '.'}, {Key.OemPeriod, '.'}, {Key.OemMinus, '–'}
 		};
 
 		public MainWindow() {
@@ -95,6 +95,7 @@ namespace Calculator {
 
 		private void InOut_PreviewKeyDown(object sender, KeyEventArgs e) {
 			e.Handled = true;
+
 			switch (e.Key) {
 				case Key.Left:
 					if (inOut.CaretIndex > 0) {
@@ -126,7 +127,31 @@ namespace Calculator {
 					break;
 				default:
 					char sym;
-					keys.TryGetValue(e.Key, out sym);
+					if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) {
+						switch(e.Key) {
+							case Key.D6:
+								sym = '^';
+								break;
+							case Key.D8:
+								sym = '×';
+								break;
+							case Key.D9:
+								sym = '(';
+								break;
+							case Key.D0:
+								sym = ')';
+								break;
+							case Key.OemPlus:
+								sym = '+';
+								break;
+							default:
+								sym = '\0';
+								break;
+						}
+					}
+					else {
+						keys.TryGetValue(e.Key, out sym);
+					}
 					Button button = null;
 					bool flag = false;
 					foreach (UIElement el in ButtonGrid.Children) {
@@ -148,20 +173,39 @@ namespace Calculator {
 		private void InOut_PreviewKeyUp(object sender, KeyEventArgs e) {
 			switch (e.Key) {
 				case Key.Enter:
-					HandleEqualsButtonClick();
 					SetButtonPressedState(equals, false);
 					break;
 				case Key.Back:
-					HandleEraseButtonClick();
-					SetButtonPressedState(erase, false);
-					break;
 				case Key.Delete:
-					HandleEraseButtonClick(true);
 					SetButtonPressedState(erase, false);
 					break;
 				default:
 					char sym;
-					keys.TryGetValue(e.Key, out sym);
+					if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) {
+						switch (e.Key) {
+							case Key.D6:
+								sym = '^';
+								break;
+							case Key.D8:
+								sym = '×';
+								break;
+							case Key.D9:
+								sym = '(';
+								break;
+							case Key.D0:
+								sym = ')';
+								break;
+							case Key.OemPlus:
+								sym = '+';
+								break;
+							default:
+								sym = '\0';
+								break;
+						}
+					}
+					else {
+						keys.TryGetValue(e.Key, out sym);
+					}
 					Button button = null;
 					bool flag = false;
 					foreach (UIElement el in ButtonGrid.Children) {
