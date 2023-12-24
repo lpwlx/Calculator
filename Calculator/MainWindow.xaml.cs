@@ -58,15 +58,18 @@ namespace Calculator {
 
 		private void CopyButtonClick(object sender, RoutedEventArgs e) {
 			Clipboard.SetText(inOut.Text);
+			inOut.Focus();
 		}
 		private void ClearButtonClick(object sender, RoutedEventArgs e) {
 			HandleClearButtonClick();
+			inOut.Focus();
 		}
 		private void HandleClearButtonClick() {
 			inOut.Text = string.Empty;
 		}
 		private void EraseButtonClick(object sender, RoutedEventArgs e) {
 			HandleEraseButtonClick();
+			inOut.Focus();
 		}
 		private void HandleEraseButtonClick(bool isDelete = false) {
 			int caretIndex = inOut.CaretIndex;
@@ -74,10 +77,10 @@ namespace Calculator {
 				inOut.Text = inOut.Text.Remove(caretIndex + (isDelete ? 0 : -1), 1);
 				inOut.CaretIndex = caretIndex + (isDelete ? 0 : -1);
 			}
-			inOut.Focus();
 		}
 		private void EqualsButtonClick(object sender, RoutedEventArgs e) {
 			HandleEqualsButtonClick();
+			inOut.Focus();
 		}
 		private void HandleEqualsButtonClick() {
 			Calculate();
@@ -85,12 +88,12 @@ namespace Calculator {
 		}
 		private void ButtonClick(object sender, RoutedEventArgs e) {
 			HandleButtonClick(sender as Button);
+			inOut.Focus();
 		}
 		private void HandleButtonClick(Button button) {
 			int caretIndex = inOut.CaretIndex;
 			inOut.Text = inOut.Text.Insert(inOut.CaretIndex, (string)button.Content); // вставка по позиции курсора
 			inOut.CaretIndex = caretIndex + 1;
-			inOut.Focus();
 		}
 
 		private void InOut_PreviewKeyDown(object sender, KeyEventArgs e) {
@@ -127,7 +130,7 @@ namespace Calculator {
 					break;
 				default:
 					char sym;
-					if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) {
+					if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) { // при нажатии shift
 						switch(e.Key) {
 							case Key.D6:
 								sym = '^';
@@ -237,11 +240,19 @@ namespace Calculator {
 		}
 
 		private void Calculate() {
-			string patternDecimal = @"(?<=\D|^)\.(\d+)"; // поиск чисел вида ".123"
+			string patternDecimal = @"(?<=\D|^)\.(\d+)"; // числа без указания нуля в целой части
 			Regex regexDecimal = new Regex(patternDecimal);
-			string processedInput = regexDecimal.Replace(inOut.Text, "0.$1"); // добавление нуля перед точкой
+			string processedInput = regexDecimal.Replace(inOut.Text, "0.$1");
 
-			string patternSqrt = @"√(\d+(\.\d+)?)"; // поиск символов корня и их следующих цифр (включая дробные числа)
+			string patternShortMult = @"(\(.+?\)|\d+(\.\d+)?|\w+)\((.+?)\)"; // число перед скобками
+			Regex regexShortMult = new Regex(patternShortMult);
+			processedInput = regexShortMult.Replace(processedInput, "$1*($3)");
+
+			string patternShortMultSqrt = @"(\(.+?\)|\d+(\.\d+)?|\w+)√(\(.+?\)|\d+(\.\d+)?|\w+)"; // число перед корнем
+			Regex regexShortMultSqrt = new Regex(patternShortMultSqrt);
+			processedInput = regexShortMultSqrt.Replace(processedInput, "$1*√($3)");
+
+			string patternSqrt = @"√(\d+(\.\d+)?)"; // корень без скобок (включая дробные числа)
 			Regex regexSqrt = new Regex(patternSqrt);
 			processedInput = regexSqrt.Replace(processedInput, "√($1)");
 
