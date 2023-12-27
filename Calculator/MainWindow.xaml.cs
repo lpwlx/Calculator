@@ -57,8 +57,11 @@ namespace Calculator {
 		}
 
 		private void CopyButtonClick(object sender, RoutedEventArgs e) {
-			Clipboard.SetText(inOut.Text);
+			HandleCopyButtonClick();
 			inOut.Focus();
+		}
+		private void HandleCopyButtonClick() {
+			Clipboard.SetText(inOut.Text);
 		}
 		private void ClearButtonClick(object sender, RoutedEventArgs e) {
 			HandleClearButtonClick();
@@ -98,7 +101,6 @@ namespace Calculator {
 
 		private void InOut_PreviewKeyDown(object sender, KeyEventArgs e) {
 			e.Handled = true;
-
 			switch (e.Key) {
 				case Key.Left:
 					if (inOut.CaretIndex > 0) {
@@ -128,10 +130,16 @@ namespace Calculator {
 					SetButtonPressedState(erase, true);
 					HandleEraseButtonClick(true);
 					break;
+				case Key.C:
+					if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) {
+						SetButtonPressedState(copy, true);
+						HandleCopyButtonClick();
+					}
+					break;
 				default:
 					char sym;
 					if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) { // при нажатии shift
-						switch(e.Key) {
+						switch (e.Key) {
 							case Key.D6:
 								sym = '^';
 								break;
@@ -182,6 +190,9 @@ namespace Calculator {
 				case Key.Delete:
 					SetButtonPressedState(erase, false);
 					break;
+				case Key.C:
+					SetButtonPressedState(copy, false);
+					break;
 				default:
 					char sym;
 					if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) {
@@ -209,6 +220,7 @@ namespace Calculator {
 					else {
 						keys.TryGetValue(e.Key, out sym);
 					}
+
 					Button button = null;
 					bool flag = false;
 					foreach (UIElement el in ButtonGrid.Children) {

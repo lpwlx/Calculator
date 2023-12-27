@@ -31,6 +31,7 @@ namespace Calculator {
 			throw new NotImplementedException();
 		}
 	}
+
 	public static class TextWidthCalculator {
 		public static double GetTextWidth(string text, string fontFamily, double fontSize) {
 			FormattedText formattedText = new FormattedText(
