@@ -262,5 +262,8 @@
   <ItemGroup>
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.0.7" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="taskbar_icon.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

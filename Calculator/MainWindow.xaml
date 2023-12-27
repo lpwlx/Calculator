@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Calculator"
-        xmlns:tb="http://www.hardcodet.net/taskbar"
         mc:Ignorable="d"
         Title="Calculator" Height="480" Width="400"
         Background="Black" Foreground="White"
@@ -13,7 +12,7 @@
     <Window.Resources>
         <local:CalculateFontSize x:Key="CalculateFontSize" />
 
-        <Style x:Key="MyButton" TargetType="Button">
+        <Style x:Key="MyButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#1F1F1F"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="28"/>
@@ -23,7 +22,6 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Border x:Name="ButtonBorder" CornerRadius="0" Margin="1" BorderThickness="1" BorderBrush="#707070" Background="#1F1F1F">
-
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="MyNormalState" />
@@ -50,6 +48,27 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="MyTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="border" BorderBrush="Transparent" BorderThickness="1">
+                            <!-- Ваши остальные части управления TextBox -->
+                            <ScrollViewer x:Name="PART_ContentHost" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="Black"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="Black"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Grid x:Name="MainGrid">
@@ -58,14 +77,8 @@
             <RowDefinition Height="80*"/>
         </Grid.RowDefinitions>
 
-        <!-- обнуление стилей при IsFocused == true (не работает)-->
-        <Grid.Resources>
-            <Style TargetType="TextBox">
-                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            </Style>
-        </Grid.Resources>
-
-        <TextBox x:Name="inOut"
+        <TextBox x:Name="inOut" Style="{StaticResource MyTextBoxStyle}"
+         Grid.Row="0" Grid.Column="0"
          Width="Auto" Height="Auto" 
          HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
          HorizontalContentAlignment="Right" VerticalContentAlignment="Center"
@@ -75,7 +88,8 @@
          VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
          PreviewKeyDown="InOut_PreviewKeyDown" 
          PreviewKeyUp="InOut_PreviewKeyUp"
-         TextOptions.TextFormattingMode="Display">
+         TextOptions.TextFormattingMode="Display"
+         >
 
             <!-- установка CalculateFontSize как ресурса -->
             <TextBox.Resources>
@@ -90,6 +104,9 @@
                     <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
                 </MultiBinding>
             </TextBox.FontSize>
+
+            
+
         </TextBox>
 
         <Grid x:Name="ButtonGrid" Grid.Row="1" Grid.Column="0">
@@ -127,32 +144,30 @@
                 -->
             </Grid.Resources>
 
-            <Button Style="{StaticResource MyButton}" Grid.Column="1" Grid.Row="5">0</Button>
-            <Button Style="{StaticResource MyButton}" Grid.Column="0" Grid.Row="4">1</Button>
-            <Button Style="{StaticResource MyButton}" Grid.Column="1" Grid.Row="4">2</Button>
-            <Button Style="{StaticResource MyButton}" Grid.Column="2" Grid.Row="4">3</Button>
-            <Button Style="{StaticResource MyButton}" Grid.Column="0" Grid.Row="3">4</Button>
-            <Button Style="{StaticResource MyButton}" Grid.Column="1" Grid.Row="3">5</Button>
-            <Button Style="{StaticResource MyButton}" Grid.Column="2" Grid.Row="3">6</Button>
-            <Button Style="{StaticResource MyButton}" Grid.Column="0" Grid.Row="2">7</Button>
-            <Button Style="{StaticResource MyButton}" Grid.Column="1" Grid.Row="2">8</Button>
-            <Button Style="{StaticResource MyButton}" Grid.Column="2" Grid.Row="2">9</Button>
-            <Button x:Name="point" Style="{StaticResource MyButton}" Grid.Column="0" Grid.Row="5">.</Button>
-            <Button x:Name="equals" ToolTip="caclulate" Style="{StaticResource MyButton}" Grid.Column="3" Grid.Row="5">=</Button>
-            <Button Style="{StaticResource MyButton}" Grid.Column="3" Grid.Row="4">+</Button>
-            <Button x:Name="minus" Style="{StaticResource MyButton}" Grid.Column="3" Grid.Row="3">–</Button>
-            <Button x:Name="multiply" Style="{StaticResource MyButton}" Grid.Column="3" Grid.Row="2">×</Button>
-            <Button x:Name="divide" Style="{StaticResource MyButton}" Grid.Column="3" Grid.Row="1">÷</Button>
-            <Button x:Name="erase" ToolTip="erase" Style="{StaticResource MyButton}" Grid.Column="2" Grid.Row="5">⌫</Button>
-            <Button Style="{StaticResource MyButton}" Grid.Column="1" Grid.Row="1">(</Button>
-            <Button Style="{StaticResource MyButton}" Grid.Column="2" Grid.Row="1">)</Button>
-            <Button Style="{StaticResource MyButton}" Grid.Column="0" Grid.Row="1">^</Button>
-            <Button x:Name="root" Style="{StaticResource MyButton}" Grid.Column="0" Grid.Row="0">√</Button>
-            <Button x:Name="copy" ToolTip="copy to clipboard" Style="{StaticResource MyButton}" Grid.Column="1" Grid.Row="0" FontSize="24">📄</Button>
-            <Button Style="{StaticResource MyButton}" Grid.Column="2" Grid.Row="0"></Button>
-            <Button x:Name="clear" ToolTip="clear" Style="{StaticResource MyButton}" Grid.Column="3" Grid.Row="0">AC</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="1" Grid.Row="5">0</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="0" Grid.Row="4">1</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="1" Grid.Row="4">2</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="2" Grid.Row="4">3</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="0" Grid.Row="3">4</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="1" Grid.Row="3">5</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="2" Grid.Row="3">6</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="0" Grid.Row="2">7</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="1" Grid.Row="2">8</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="2" Grid.Row="2">9</Button>
+            <Button x:Name="point" Style="{StaticResource MyButtonStyle}" Grid.Column="0" Grid.Row="5">.</Button>
+            <Button x:Name="equals" ToolTip="caclulate" Style="{StaticResource MyButtonStyle}" Grid.Column="3" Grid.Row="5">=</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="3" Grid.Row="4">+</Button>
+            <Button x:Name="minus" Style="{StaticResource MyButtonStyle}" Grid.Column="3" Grid.Row="3">–</Button>
+            <Button x:Name="multiply" Style="{StaticResource MyButtonStyle}" Grid.Column="3" Grid.Row="2">×</Button>
+            <Button x:Name="divide" Style="{StaticResource MyButtonStyle}" Grid.Column="3" Grid.Row="1">÷</Button>
+            <Button x:Name="erase" ToolTip="erase" Style="{StaticResource MyButtonStyle}" Grid.Column="2" Grid.Row="5">⌫</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="1" Grid.Row="1">(</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="2" Grid.Row="1">)</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="0" Grid.Row="1">^</Button>
+            <Button x:Name="root" Style="{StaticResource MyButtonStyle}" Grid.Column="0" Grid.Row="0">√</Button>
+            <Button x:Name="copy" ToolTip="copy to clipboard" Style="{StaticResource MyButtonStyle}" Grid.Column="1" Grid.Row="0" FontSize="24">📄</Button>
+            <Button Style="{StaticResource MyButtonStyle}" Grid.Column="2" Grid.Row="0"></Button>
+            <Button x:Name="clear" ToolTip="clear" Style="{StaticResource MyButtonStyle}" Grid.Column="3" Grid.Row="0">AC</Button>
         </Grid>
-        <!-- иконка для панели задач -->
-        <tb:TaskbarIcon IconSource="taskbar_icon.ico" />
     </Grid>
 </Window>
