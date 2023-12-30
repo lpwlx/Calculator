@@ -254,38 +254,47 @@ namespace Calculator {
 		private void Calculate() {
 			string patternDecimal = @"(?<=\D|^)\.(\d+)"; // числа без указания нуля в целой части
 			Regex regexDecimal = new Regex(patternDecimal);
-			string processedInput = regexDecimal.Replace(inOut.Text, "0.$1");
+			string processedInput = regexDecimal.Replace(inOut.Text, "(0.$1)");
 
-			string patternShortMult = @"(\(.+?\)|\d+(\.\d+)?|\w+)\((.+?)\)"; // число перед скобками
+			string patternShortMult = @"(\(.+?\)|\d+(\.\d+)?|\w+)\((.+?)\)"; // число перед скобками (включая дробные числа)
 			Regex regexShortMult = new Regex(patternShortMult);
-			processedInput = regexShortMult.Replace(processedInput, "$1*($3)");
+			processedInput = regexShortMult.Replace(processedInput, "($1*($3))");
 
-			string patternShortMultSqrt = @"(\(.+?\)|\d+(\.\d+)?|\w+)√(\(.+?\)|\d+(\.\d+)?|\w+)"; // число перед корнем
+			string patternShortMultSqrt = @"(\(.+?\)|\d+(\.\d+)?|\w+)√(\(.+?\)|\d+(\.\d+)?|\w+)"; // число перед корнем (включая дробные числа)
 			Regex regexShortMultSqrt = new Regex(patternShortMultSqrt);
-			processedInput = regexShortMultSqrt.Replace(processedInput, "$1*√($3)");
+			processedInput = regexShortMultSqrt.Replace(processedInput, "($1*(√($3)))");
 
-			string patternSqrt = @"√(\d+(\.\d+)?)"; // корень без скобок (включая дробные числа)
+			string patternSqrt = @"(√(\d+(\.\d+)?))"; // корень без скобок (включая дробные числа)
 			Regex regexSqrt = new Regex(patternSqrt);
-			processedInput = regexSqrt.Replace(processedInput, "√($1)");
+			processedInput = regexSqrt.Replace(processedInput, "(√($1))");
 
-			string patternPow = @"(\(.+?\)|\d+(\.\d+)?|\w+)\^(\(.+?\)|\d+(\.\d+)?|\w+)"; // поиск выражений вида x^y (включая дробные числа)
+			string patternPow = @"(\(.+?\)|\d+(\.\d+)?|\w+)\^(\(.+?\)|\d+(\.\d+)?|\w+)"; // выражения вида x^y (включая дробные числа)
 			Regex regexPow = new Regex(patternPow);
-			processedInput = regexPow.Replace(processedInput, "Pow($1, $3)");
+			processedInput = regexPow.Replace(processedInput, "(Pow($1, $3))");
 
-			try {
-				NCalc.Expression expression = new NCalc.Expression(processedInput.Replace('–', '-').Replace('×', '*').Replace('÷', '/').Replace("√", "Sqrt"));
+			string patternPi = @"(\d+(\.\d+)?)π"; // число перед π (включая дробные числа)
+			Regex regexPi = new Regex(patternPi);
+			processedInput = regexPi.Replace(processedInput, "($1*Pi)");
 
-				object result = expression.Evaluate();
+			if (inOut.Text != "") {
+				try {
+					NCalc.Expression expression = new NCalc.Expression(processedInput.Replace('–', '-').Replace('×', '*').Replace('÷', '/').Replace("√", "Sqrt").Replace("π", "Pi"));
+					expression.Parameters["Pi"] = Math.PI;
 
-				if (result != null) {
-					inOut.Text = result.ToString().Replace(',', '.'); // ToString возвращает запятую (?)
+					object result = expression.Evaluate();
+
+					if (result != null) {
+						inOut.Text = result.ToString().Replace(',', '.'); // ToString возвращает запятую (?)
+					}
+					else {
+						MessageBox.Show("Error");
+						SetButtonPressedState(equals, false);
+					}
 				}
-				else {
-					MessageBox.Show("Error");
+				catch (/*EvaluationException*/Exception ex) {
+					MessageBox.Show("Error: " + ex.Message);
+					SetButtonPressedState(equals, false);
 				}
-			}
-			catch (Exception ex) {
-				MessageBox.Show("Error: " + ex.Message);
 			}
 		}
 	}
