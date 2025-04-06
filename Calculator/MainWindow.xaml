@@ -9,11 +9,11 @@
         Height="480" Width="400"
         MinHeight="350" MinWidth="240"
         Background="Black" Foreground="White"
-        Icon="title_icon.png">
+        Icon="icon.png">
 
     <Window.Resources>
         <local:CalculateFontSize x:Key="CalculateFontSize" />
-
+        
         <Style x:Key="MyButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#1F1F1F"/>
             <Setter Property="Foreground" Value="White"/>

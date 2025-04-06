@@ -161,6 +161,11 @@ namespace Calculator {
 						}
 					}
 					else {
+						if (e.Key == Key.OemPlus) {
+							SetButtonPressedState(equals, true);
+							HandleEqualsButtonClick();
+							break;
+						}
 						keys.TryGetValue(e.Key, out sym);
 					}
 					Button button = null;
@@ -218,6 +223,10 @@ namespace Calculator {
 						}
 					}
 					else {
+						if (e.Key == Key.OemPlus) {
+							SetButtonPressedState(equals, false);
+							break;
+						}
 						keys.TryGetValue(e.Key, out sym);
 					}
 
